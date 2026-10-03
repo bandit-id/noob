@@ -1415,8 +1415,10 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       if (hostname === "localhost" || hostname === "127.0.0.1") {
         return "http://127.0.0.1:5000";
       }
-      return window.location.origin;
+      // Jika diakses melalui Cloudflare Tunnel atau web hosting lain, arahkan ke link tunnel Anda
+      return "https://matrix-tax-healthy-anywhere.trycloudflare.com";
     };
+
 
     const API_BASE = getApiBaseUrl();
 
