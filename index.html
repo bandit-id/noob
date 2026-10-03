@@ -2129,25 +2129,26 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       URL.revokeObjectURL(url);
     }
 
-    async function startEngine(id) {
-      try {
-        await fetchWithInstantTimeout(`${API_BASE}/api/engine/start`, {
-          method: 'POST'
-        });
-      } catch (err) {
-        showCustomAlert("KRITIS", "Gagal terhubung ke daemon server backend. Server sedang offline.");
+async function startEngine(id) {
+  try {
+    const response = await fetchWithInstantTimeout(`${API_BASE}/api/engine/start`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
       }
+    });
+
+    // Jika server merespons tapi statusnya error (misal 500 atau 404)
+    if (!response.ok) {
+      throw new Error("Server merespons dengan status error.");
     }
 
-    async function haltEngine(id) {
-      try {
-        await fetchWithInstantTimeout(`${API_BASE}/api/engine/stop`, {
-          method: 'POST'
-        });
-      } catch (err) {
-        showCustomAlert("KRITIS", "Gagal terhubung ke daemon server backend. Server sedang offline.");
-      }
-    }
+  } catch (err) {
+    // Blok ini akan MENYALA di GitHub jika server mati, CORS bermasalah, atau URL salah!
+    showCustomAlert("KRITIS", "Gagal terhubung ke daemon server backend. Server sedang offline atau diblokir jaringan.");
+  }
+}
+
 
     async function runScan(id) {
       if (!engines[id].isRunning) {
