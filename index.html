@@ -1273,9 +1273,8 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       if (hostname === "localhost" || hostname === "127.0.0.1") {
         return "http://127.0.0.1:5000";
       }
-      return "https://detection-unavailable-shield-offering.trycloudflare.com"; // <-- 🎯 [YANG DIGANTI] Diarahkan langsung ke Tunnel HP Anda
+      return "https://[LINK-BARU-TUNNEL]";
     };
-
     const API_BASE = getApiBaseUrl();
 
     let userSessionId = localStorage.getItem('phantom_user_uuid');
@@ -1388,12 +1387,10 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     function initWebSocket() {
       const hostname = window.location.hostname;
-      // 🎯 [YANG DIGANTI] Jika di GitHub Pages, arahkan langsung ke wss:// Cloudflare Tunnel Anda
-      const wsUrl = (hostname === "localhost" || hostname === "127.0.0.1") ? "ws://127.0.0.1:5000/ws" : "wss://detection-unavailable-shield-offering.trycloudflare.com/ws";
+      const wsUrl = (hostname === "localhost" || hostname === "127.0.0.1") ? "ws://127.0.0.1:5000/ws" : "wss://[LINK-BARU-ANDA]/ws";
       
       try {
         wsClient = new WebSocket(wsUrl);
-        // 🎯 [DITAMBAHKAN] Mencegah error WebSocket membuat browser freeze
         wsClient.onerror = function(err) { console.log("WebSocket offline"); };
       } catch (e) {}
 
@@ -1823,7 +1820,7 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       try {
         await fetchWithInstantTimeout(`${API_BASE}/api/engine/start`, { method: 'POST' });
       } catch (err) {
-        showCustomAlert("KRITIS", "Gagal terhubung ke daemon server backend. Server sedang offline.");
+        showCustomAlert("KRITIS", "Koneksi terputus. Server tidak merespons atau sedang offline. [Noobstar]");
       }
     }
 
