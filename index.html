@@ -1270,27 +1270,31 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     const getApiBaseUrl = () => {
       const hostname = window.location.hostname;
-      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
         return "http://127.0.0.1:5000";
       }
-      if (hostname.includes("github.io")) {
-        return "https://jumping-item-mineral-snowboard.trycloudflare.com"; // <-- 1. Ubah di sini
-      }
-      return window.location.origin;
-    };
-    const getApiBaseUrl = () => {
-      const hostname = window.location.hostname;
-      // Jika diakses lokal
-      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "" || hostname.includes("192.168.")) {
-        return "http://127.0.0.1:5000";
-      }
-      // Jika di GitHub Pages, gunakan Cloudflare Tunnel
-      if (hostname.includes("github.io")) {
-        return "https://jumping-item-mineral-snowboard.trycloudflare.com";
-      }
-      return window.location.origin;
+      return "https://jumping-item-mineral-snowboard.trycloudflare.com";
     };
     const API_BASE = getApiBaseUrl();
+
+    let userSessionId = localStorage.getItem('phantom_user_uuid');
+    if (!userSessionId) {
+      userSessionId = 'user_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+      localStorage.setItem('phantom_user_uuid', userSessionId);
+    }
+
+    async function fetchWithInstantTimeout(url, options = {}, timeoutMs = 15000) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(timeoutId);
+        return response;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw new Error("SERVER_OFFLINE");
+      }
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       const textInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
@@ -1383,28 +1387,21 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     function initWebSocket() {
       const hostname = window.location.hostname;
-      let wsUrl = "";
-
-      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "" || hostname.includes("192.168.")) {
-        wsUrl = "ws://127.0.0.1:5000/ws";
-      } else if (hostname.includes("github.io")) {
-        wsUrl = "wss://jumping-item-mineral-snowboard.trycloudflare.com/ws";
-      } else {
-        const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-        wsUrl = `${wsProtocol}${window.location.host}/ws`;
-      }
+      const wsUrl = (hostname === "localhost" || hostname === "127.0.0.1") ? "ws://127.0.0.1:5000/ws" : "wss://jumping-item-mineral-snowboard.trycloudflare.com/ws";
       
       try {
         wsClient = new WebSocket(wsUrl);
-        wsClient.onerror = function(err) { console.log("WebSocket offline / blocked"); };
+        wsClient.onerror = function(err) { console.log("WebSocket offline"); };
       } catch (e) {}
 
       wsClient.onmessage = function(event) {
         try {
           const data = JSON.parse(event.data);
+          
           if (data.type === 'maintenance_mode') {
             const maintenanceOverlay = document.getElementById('maintenanceModalOverlay');
             const maintenanceMsg = document.getElementById('maintenanceModalMsg');
+            
             if (data.is_maintenance) {
               if (maintenanceMsg) maintenanceMsg.innerText = data.message || "Server sedang dalam pemeliharaan berkala.";
               if (maintenanceOverlay) maintenanceOverlay.style.display = 'flex';
@@ -1415,6 +1412,7 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
             }
             return;
           }
+
           if (data.type === 'popup_notification') {
             showCustomAlert(data.title, data.message);
             return;
@@ -1439,10 +1437,9 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       };
       wsClient.onclose = function() {
         if (isClientBanned) return;
-        setTimeout(initWebSocket, 3000);
+        setTimeout(initWebSocket, 2000);
       };
     }
-
 
     function showBannedScreen(message) {
       document.body.innerHTML = `
