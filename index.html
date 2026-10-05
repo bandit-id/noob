@@ -1398,15 +1398,11 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       let wsUrl = "";
       
       if (hostname === "localhost" || hostname === "127.0.0.1") {
-        // Jalur Lokal
-        wsUrl = "ws://investigation-produces-kennedy-established.trycloudflare.com/ws";
+        // Jalur Lokal (Komputer sendiri)
+        wsUrl = "ws://127.0.0.1:5000/ws";
       } else {
-        // Jalur Cloudflare Tunnel / Hosting (Otomatis ikut domain aktif + /ws)
+        // Jalur Cloudflare Tunnel / Hosting Publik (Otomatis menyesuaikan domain yang aktif)
         wsUrl = protocol + window.location.host + '/ws';
-        
-        // CATATAN HOSTING PUBLIK: 
-        // Jika nanti di-hosting terpisah dan domainnya fix, kamu bisa ubah baris atas menjadi:
-        // wsUrl = "wss://domain-hosting-kamu.com/ws";
       }
       
       try {
