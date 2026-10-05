@@ -1270,21 +1270,10 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     const getApiBaseUrl = () => {
       const hostname = window.location.hostname;
-      const protocol = window.location.protocol;
-      
-      // Jika diakses secara lokal / langsung dari mesin server Python
-      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
         return "http://127.0.0.1:5000";
       }
-      
-      // Jika di-hosting di GitHub Pages atau domain publik luar, tetapi backend Python ada di Cloudflare
-      // (Ganti string di bawah dengan URL Cloudflare Anda jika di-hosting terpisah di GitHub)
-      if (hostname.includes("github.io")) {
-        return "https://[URL-CLOUDFLARE-ANDA]"; 
-      }
-      
-      // Jika file HTML disajikan langsung oleh server Python aiohttp / Cloudflare Tunnel
-      return `${protocol}//${window.location.host}`;
+      return "https://cet-husband-treating-blogging.trycloudflare.com";
     };
     const API_BASE = getApiBaseUrl();
 
@@ -1398,17 +1387,7 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     function initWebSocket() {
       const hostname = window.location.hostname;
-      const isHttps = window.location.protocol === 'https:';
-      const wsProtocol = isHttps ? 'wss://' : 'ws://';
-      
-      let wsUrl = "";
-      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
-        wsUrl = "ws://127.0.0.1:5000/ws";
-      } else if (hostname.includes("github.io")) {
-        wsUrl = "wss:cet-husband-treating-blogging.trycloudflare.com/ws"; // Ubah [URL-CLOUDFLARE-ANDA] tanpa https:// (contoh: sub.trycloudflare.com)
-      } else {
-        wsUrl = `${wsProtocol}${window.location.host}/ws`;
-      }
+      const wsUrl = (hostname === "localhost" || hostname === "127.0.0.1") ? "ws://127.0.0.1:5000/ws" : "wss://cet-husband-treating-blogging.trycloudflare.com/ws";
       
       try {
         wsClient = new WebSocket(wsUrl);
