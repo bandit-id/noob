@@ -1281,26 +1281,18 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       // atau ganti dengan "https://domain-kamu.com" jika frontend & backend terpisah.
       return "https://investigation-produces-kennedy-established.trycloudflare.com"; 
     };
-    const API_BASE = getApiBaseUrl();
-
-    let userSessionId = localStorage.getItem('phantom_user_uuid');
-    if (!userSessionId) {
-      userSessionId = 'user_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-      localStorage.setItem('phantom_user_uuid', userSessionId);
-    }
-
-    async function fetchWithInstantTimeout(url, options = {}, timeoutMs = 15000) {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const response = await fetch(url, { ...options, signal: controller.signal });
-        clearTimeout(timeoutId);
-        return response;
-      } catch (error) {
-        clearTimeout(timeoutId);
-        throw new Error("SERVER_OFFLINE");
+    const getApiBaseUrl = () => {
+      const hostname = window.location.hostname;
+      
+      // Jika diakses secara lokal di komputer/perangkat sendiri
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
+        return "http://127.0.0.1:5000";
       }
-    }
+      
+      // Jika menggunakan Cloudflare Tunnel (Tanpa garis miring / di ujung URL)
+      return "https://investigation-produces-kennedy-established.trycloudflare.com"; 
+    };
+    const API_BASE = getApiBaseUrl();
 
     document.addEventListener('DOMContentLoaded', () => {
       const textInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
@@ -1398,10 +1390,10 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       let wsUrl = "";
       
       if (hostname === "localhost" || hostname === "127.0.0.1") {
-        // Jalur Lokal (Komputer sendiri)
+        // Jalur Lokal
         wsUrl = "ws://127.0.0.1:5000/ws";
       } else {
-        // Jalur Cloudflare Tunnel / Hosting Publik (Otomatis menyesuaikan domain yang aktif)
+        // Jalur Cloudflare Tunnel (Otomatis menggunakan wss:// dan domain aktif)
         wsUrl = protocol + window.location.host + '/ws';
       }
       
