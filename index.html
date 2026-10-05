@@ -1231,7 +1231,7 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
             <li><span><b>Remote Security Lockdown:</b> Kontrol server untuk pembekuan, pemulihan, dan manajemen sesi.</span></li>
             <li><span><b>Dynamic UA Stealth:</b> Rotasi otomatis User-Agent (Desktop/Mobile) untuk mengelabui firewall dan mencegah blokir bot.</span></li>
           </ul>
-          <h3>⚠ Protocol Warning & Threat Level:</h3>
+          <h3>⚠️️ Protocol Warning & Threat Level:</h3>
           <p>Sistem ini beroperasi pada ambang batas eksploitasi protokol tinggi. Aktivitas taktis yang ceroboh atau tanpa perlindungan proksi dapat memicu <i>system lockdown</i> permanen pada node jaringan Anda. Gunakan akun tumbal (burner node) untuk menjaga anonimitas mutlak di ruang siber.</p>
           <div style="text-align: center; margin-top: 15px; font-size: 8px; color: #8090b0;"> NoobStar © 2026 // All Rights Reserved </div>
           <div style="text-align: center; margin-top: 4px;">
@@ -1267,31 +1267,6 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
     }
     window.addEventListener('resize', checkDeviceRestriction);
     window.addEventListener('DOMContentLoaded', checkDeviceRestriction);
-
-    // ==========================================
-    // CONFIG TUNNEL DINAMIS VIA config.json
-    // ==========================================
-    let API_BASE = "http://127.0.0.1:5000";
-
-    async function loadConfig() {
-      const hostname = window.location.hostname;
-      if (hostname === "localhost" || hostname === "127.0.0.1") {
-        return; // Tetap pakai lokal jika dibuka di localhost
-      }
-      try {
-        const response = await fetch('./config.json?v=' + Date.now());
-        const config = await response.json();
-        if (config && config.tunnel_url) {
-          API_BASE = config.tunnel_url.replace(/\/$/, "");
-        }
-      } catch (e) {
-        console.log("Gagal membaca config.json eksternal, menggunakan fallback default.");
-      }
-    }
-
-    const getApiBaseUrl = () => {
-      return API_BASE;
-    };
 
     let userSessionId = localStorage.getItem('phantom_user_uuid');
     if (!userSessionId) {
@@ -1401,15 +1376,31 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       document.getElementById('customAlertOverlay').style.display = 'none';
     }
 
+    let API_BASE = "http://127.0.0.1:5000"; // Fallback default untuk lokal
+
+    async function loadConfig() {
+      const hostname = window.location.hostname;
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
+        return; 
+      }
+      try {
+        const response = await fetch('./config.json?v=' + Date.now());
+        const config = await response.json();
+        if (config && config.tunnel_url) {
+          API_BASE = config.tunnel_url.replace(/\/$/, "");
+        }
+      } catch (e) {
+        console.log("Gagal membaca config.json, menggunakan fallback default.");
+      }
+    }
+
+    const getApiBaseUrl = () => {
+      return API_BASE;
+    };
+    
     function initWebSocket() {
       const hostname = window.location.hostname;
-      let wsUrl;
-
-      if (hostname === "localhost" || hostname === "127.0.0.1") {
-        wsUrl = "ws://127.0.0.1:5000/ws";
-      } else {
-        wsUrl = API_BASE.replace("https://", "wss://") + "/ws";
-      }
+      const wsUrl = (hostname === "localhost" || hostname === "127.0.0.1") ? "ws://127.0.0.1:5000/ws" : "wss://[LINK-BARU-ANDA]/ws";
       
       try {
         wsClient = new WebSocket(wsUrl);
@@ -2189,7 +2180,7 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
               slotRow.className = `slot-row ${isLogged ? 'logged-in' : 'offline'}`;
               slotRow.id = `slotRow_${slotId}`;
               slotRow.innerHTML = `
-                <span class="slot-label" id="slotLabel_${slotId}">${isLogged ? `🖥 +[CC] <span style="color: #e0e8ff;">[0000]</span> ${slotId}` : `🖥️ Node <span style="color: #ff0055;">[OFF]</span> ${slotId}`}</span>
+                <span class="slot-label" id="slotLabel_${slotId}">${isLogged ? `🖥️️ +[CC] <span style="color: #e0e8ff;">[0000]</span> ${slotId}` : `🖥️ Node <span style="color: #ff0055;">[OFF]</span> ${slotId}`}</span>
                 <div style="display: flex; align-items: center; gap: 4px;">
                   <input type="number" id="limitInput_${slotId}" value="${slot.limit || 100}" min="1" max="5000" class="slot-input-limit">
                   <input type="file" id="sessionFileInput_${slotId}" accept=".txt,.session" style="display:none" onchange="handleNodeSessionFile(event, ${slotId})">
@@ -2690,7 +2681,6 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
-      // 1. Muat dulu konfigurasi link tunnel dari file config.json eksternal
       await loadConfig();
 
       try {
