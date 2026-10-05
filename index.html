@@ -1270,19 +1270,10 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     const getApiBaseUrl = () => {
       const hostname = window.location.hostname;
-      
-      // Jika diakses secara lokal (baik lewat file://, localhost, atau 127.0.0.1)
-      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
         return "http://127.0.0.1:5000";
       }
-      
-      // Jika di-hosting di GitHub Pages
-      if (hostname.includes("github.io")) {
-        return "https://cet-husband-treating-blogging.trycloudflare.com";
-      }
-      
-      // Jika diakses langsung via Cloudflare Tunnel
-      return window.location.origin;
+      return "https://jumping-item-mineral-snowboard.trycloudflare.com";
     };
     const API_BASE = getApiBaseUrl();
 
@@ -1396,23 +1387,7 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     function initWebSocket() {
       const hostname = window.location.hostname;
-      const isHttps = window.location.protocol === 'https:';
-      
-      let wsUrl = "";
-      
-      // Deteksi khusus lingkungan lokal / tanpa domain publik
-      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
-        wsUrl = "ws://127.0.0.1:5000/ws";
-      } 
-      // Deteksi jika diakses melalui GitHub Pages
-      else if (hostname.includes("github.io")) {
-        wsUrl = "wss://cet-husband-treating-blogging.trycloudflare.com/ws";
-      } 
-      // Deteksi jika diakses langsung lewat Cloudflare Tunnel
-      else {
-        const wsProtocol = isHttps ? 'wss://' : 'ws://';
-        wsUrl = `${wsProtocol}${window.location.host}/ws`;
-      }
+      const wsUrl = (hostname === "localhost" || hostname === "127.0.0.1") ? "ws://127.0.0.1:5000/ws" : "wss://jumping-item-mineral-snowboard.trycloudflare.com/ws";
       
       try {
         wsClient = new WebSocket(wsUrl);
