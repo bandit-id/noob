@@ -1268,15 +1268,20 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
     window.addEventListener('resize', checkDeviceRestriction);
     window.addEventListener('DOMContentLoaded', checkDeviceRestriction);
 
-const getApiBaseUrl = () => {
-  const hostname = window.location.hostname;
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return "http://127.0.0.1:5000";
-  }
-  return "https://jumping-item-mineral-snowboard.trycloudflare.com";
-};
-const API_BASE = getApiBaseUrl();
-
+      const getApiBaseUrl = () => {
+      const hostname = window.location.hostname;
+      
+      // Jika diakses secara lokal di komputer sendiri
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
+        return "http://127.0.0.1:5000";
+      }
+      
+      // Jika menggunakan Cloudflare Tunnel atau Hosting Publik:
+      // Kosongkan ("") jika file HTML ini di-hosting langsung oleh server Python yang sama,
+      // atau ganti dengan "https://domain-kamu.com" jika frontend & backend terpisah.
+      return "https://investigation-produces-kennedy-established.trycloudflare.com"; 
+    };
+    const API_BASE = getApiBaseUrl();
 
     let userSessionId = localStorage.getItem('phantom_user_uuid');
     if (!userSessionId) {
@@ -1388,7 +1393,21 @@ const API_BASE = getApiBaseUrl();
 
     function initWebSocket() {
       const hostname = window.location.hostname;
-      const wsUrl = (hostname === "localhost" || hostname === "127.0.0.1") ? "ws://127.0.0.1:5000/ws" : "wss://jumping-item-mineral-snowboard.trycloudflare.com/ws";
+      const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+      
+      let wsUrl = "";
+      
+      if (hostname === "localhost" || hostname === "127.0.0.1") {
+        // Jalur Lokal
+        wsUrl = "ws://investigation-produces-kennedy-established.trycloudflare.com/ws";
+      } else {
+        // Jalur Cloudflare Tunnel / Hosting (Otomatis ikut domain aktif + /ws)
+        wsUrl = protocol + window.location.host + '/ws';
+        
+        // CATATAN HOSTING PUBLIK: 
+        // Jika nanti di-hosting terpisah dan domainnya fix, kamu bisa ubah baris atas menjadi:
+        // wsUrl = "wss://domain-hosting-kamu.com/ws";
+      }
       
       try {
         wsClient = new WebSocket(wsUrl);
@@ -1436,6 +1455,7 @@ const API_BASE = getApiBaseUrl();
           console.error("Gagal parse WS message:", e);
         }
       };
+
       wsClient.onclose = function() {
         if (isClientBanned) return;
         setTimeout(initWebSocket, 2000);
