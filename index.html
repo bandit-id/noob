@@ -1268,13 +1268,12 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
     window.addEventListener('resize', checkDeviceRestriction);
     window.addEventListener('DOMContentLoaded', checkDeviceRestriction);
 
-    const getApiBaseUrl = () => {
-      const hostname = window.location.hostname;
-      if (hostname === "localhost" || hostname === "127.0.0.1") {
-        return "http://127.0.0.1:5000";
-      }
-      return "https://jumping-item-mineral-snowboard.trycloudflare.com";
-    };
+const getApiBaseUrl = () => {
+  return "https://jumping-item-mineral-snowboard.trycloudflare.com";
+};
+// Dan untuk WebSocket:
+const wsUrl = "wss://jumping-item-mineral-snowboard.trycloudflare.com/ws";
+
     const API_BASE = getApiBaseUrl();
 
     let userSessionId = localStorage.getItem('phantom_user_uuid');
