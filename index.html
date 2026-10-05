@@ -1270,10 +1270,13 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     const getApiBaseUrl = () => {
       const hostname = window.location.hostname;
-      if (hostname === "localhost" || hostname === "127.0.0.1") {
+      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
         return "http://127.0.0.1:5000";
       }
-      return "https://jumping-item-mineral-snowboard.trycloudflare.com";
+      if (hostname.includes("github.io")) {
+        return "https://jumping-item-mineral-snowboard.trycloudflare.com"; // <-- 1. Ubah di sini
+      }
+      return window.location.origin;
     };
     const API_BASE = getApiBaseUrl();
 
@@ -1387,7 +1390,17 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
 
     function initWebSocket() {
       const hostname = window.location.hostname;
-      const wsUrl = (hostname === "localhost" || hostname === "127.0.0.1") ? "ws://127.0.0.1:5000/ws" : "wss://jumping-item-mineral-snowboard.trycloudflare.com/ws";
+      const isHttps = window.location.protocol === 'https:';
+      
+      let wsUrl = "";
+      if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
+        wsUrl = "ws://127.0.0.1:5000/ws";
+      } else if (hostname.includes("github.io")) {
+        wsUrl = "wss://jumping-item-mineral-snowboard.trycloudflare.com/ws";
+      } else {
+        const wsProtocol = isHttps ? 'wss://' : 'ws://';
+        wsUrl = `${wsProtocol}${window.location.host}/ws`;
+      }
       
       try {
         wsClient = new WebSocket(wsUrl);
