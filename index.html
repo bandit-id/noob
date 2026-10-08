@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1419,7 +1418,7 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
       } catch (e) {}
 
       const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-      const wsUrl = `${protocol}${wsHost}/ws`;
+      const wsUrl = `${protocol}${wsHost}/ws?user_id=${userSessionId}`;
       
       try {
         wsClient = new WebSocket(wsUrl);
@@ -1444,6 +1443,11 @@ K   ":              ?&gt; # '#$$$$$#~!!!!TR$$$$$R?@MME              z   R
             }
             return;
           }
+
+          if (data.type === 'critical_alert') {
+            showCustomAlert(data.title || "🚨 CRITICAL ALERT", data.message || "Seluruh Worker Node telah BANNED permanen!");
+            return;
+          }    
 
           if (data.type === 'popup_notification') {
             showCustomAlert(data.title, data.message);
