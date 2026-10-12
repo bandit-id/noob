@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -2640,7 +2639,7 @@
           });
           const data = await res.json();
           if (data.ok) {
-            showCustomAlert("BERHASIL", `[Worker Node ${targetSlotId}] OTP berhasil dikirim.`);
+            showCustomAlert("BERHASIL", `[Worker Node ${targetSlotId}] Permintaan OTP berhasil dikirim.`);
             if (submitBtn) {
               submitBtn.disabled = false;
               submitBtn.style.opacity = '1';
@@ -2926,7 +2925,7 @@
           });
           const data = await res.json();
           if (data.ok) {
-            showCustomAlert("BERHASIL", "OTP berhasil dikirim.");
+            showCustomAlert("BERHASIL", "Permintaan OTP berhasil dikirim.");
             if (loginBtn) {
               loginBtn.disabled = false;
               loginBtn.innerText = "MASUKKAN KODE & A2F";
